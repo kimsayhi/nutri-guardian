@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import GNB from "@/components/layout/GNB";
 
 const pretendard = localFont({
   src: "../../public/fonts/PretendardVariable.woff2",
@@ -10,6 +11,7 @@ const pretendard = localFont({
 
 const aggro = localFont({
   src: "../../public/fonts/aggro.woff",
+  variable: "--font-aggro",
   display: "swap",
 });
 
