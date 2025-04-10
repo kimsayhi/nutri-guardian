@@ -4,7 +4,7 @@
   --background: #1e2f14;
   --foreground: #171717;
 
-  --color-primary: #6aaa49;
+  --color-primary: #578b3c;
   --color-primary-foreground: #ffffff;
   --color-primary-50: #f5faf3;
   --color-primary-100: #cde4c1;
@@ -62,8 +62,13 @@
     "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
 }
 
-body {
-  background-color: var(--background);
-  color: var(--color-neutral-1000);
-  font-family: var(--font-display);
+@layer base {
+  body {
+    background-color: var(--background);
+    color: var(--color-neutral-1000);
+    font-family: var(--font-display);
+  }
+  button {
+    cursor: pointer;
+  }
 }

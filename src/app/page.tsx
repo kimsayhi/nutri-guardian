@@ -1,6 +1,6 @@
 "use client";
-import MainProfile from "@/components/main/mainProfile";
-import DailyReport from "@/components/main/dailyReport";
+import MainProfile from "@/components/home/mainProfile";
+import DailyReport from "@/components/home/dailyReport";
 import { AiOutlineRight } from "react-icons/ai";
 
 export default function HomePage() {
@@ -9,7 +9,7 @@ export default function HomePage() {
       <main className="relative mx-auto min-h-screen w-full">
         {/* 급식 정보 카드 */}
         <MainProfile />
-        <div className="bg-primary-50 relative z-10 h-full rounded-t-xl py-10">
+        <div className="relative z-10 h-full rounded-t-xl bg-white py-10">
           {/* 오늘의 영양 리포트 */}
           <DailyReport />
           {/* 오늘의 영양 밸런스 메뉴 */}

@@ -111,7 +111,7 @@ export default function DailyReport() {
         </div>
         <div className="mb-3 flex flex-col gap-1">
           {/* 탄수화물 프로그레스 */}
-          <div className="rounded-lg bg-white p-4 shadow-sm">
+          <div className="bg-primary-50 rounded-lg p-4 shadow-sm">
             <div className="flex items-center">
               <div className="relative mr-4 h-20 w-20">
                 <Doughnut
@@ -136,7 +136,7 @@ export default function DailyReport() {
           </div>
 
           {/* 단백질 프로그레스 */}
-          <div className="rounded-lg bg-white p-4 shadow-sm">
+          <div className="bg-primary-50 rounded-lg p-4 shadow-sm">
             <div className="flex items-center">
               <div className="relative mr-4 h-20 w-20">
                 <Doughnut
@@ -161,7 +161,7 @@ export default function DailyReport() {
           </div>
 
           {/* 지방 프로그레스 */}
-          <div className="rounded-lg bg-white p-4 shadow-sm">
+          <div className="bg-primary-50 rounded-lg p-4 shadow-sm">
             <div className="flex items-center">
               <div className="relative mr-4 h-20 w-20">
                 <Doughnut
@@ -186,7 +186,7 @@ export default function DailyReport() {
           </div>
 
           {/* 총 열량 프로그레스 */}
-          <div className="rounded-lg bg-white p-4 shadow-sm">
+          <div className="bg-primary-50 rounded-lg p-4 shadow-sm">
             <div className="flex items-center">
               <div className="relative mr-4 h-20 w-20">
                 <Doughnut
