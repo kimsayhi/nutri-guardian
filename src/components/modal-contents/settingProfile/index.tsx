@@ -4,6 +4,7 @@ import Modal from "@/components/shared/Modal";
 import AddProfile from "./AddProfile";
 import useModal from "@/hooks/useModal";
 import clsx from "clsx";
+import { Button } from "@/components/ui/button";
 
 interface SettingProfileProps {
   onClose: () => void;
@@ -19,18 +20,10 @@ export default function SettingProfile({ onClose }: SettingProfileProps) {
       </h2>
       <div className="flex h-30 flex-col">프로필1</div>
       <div className="flex justify-center gap-2 text-sm">
-        <button
-          onClick={addProfileOpen}
-          className="bg-primary flex w-full items-center justify-center rounded-lg py-2 text-white"
-        >
-          새 프로필 추가
-        </button>
-        <button
-          onClick={onClose}
-          className="flex w-full items-center justify-center rounded-lg bg-neutral-600 text-white"
-        >
+        <Button onClick={addProfileOpen}>새 프로필 추가</Button>
+        <Button variant={"outline"} onClick={onClose}>
           취소
-        </button>
+        </Button>
       </div>
       <Modal
         isOpen={isOpenAddProfile}

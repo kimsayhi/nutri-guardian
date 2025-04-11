@@ -5,7 +5,7 @@ import { FormattedSchoolList } from "@/types/school";
  * 학교 정보 배열을 받아 중복 이름을 처리한 포맷된 학교 정보 객체 배열 반환
  *
  * @param schools 학교 정보 배열
- * @returns 포맷된 학교 정보 객체 배열 (이름, 시도교육청코드, 행정표준코드)
+ * @returns 포맷된 학교 정보 객체 배열 (포멧된 학교교 이름, 학교 이름, 시도교육청코드, 행정표준코드)
  */
 export function formatSchoolList(schools: SchoolInfoData[]): FormattedSchoolList[] {
   if (!schools || schools.length === 0) return [];
@@ -22,7 +22,8 @@ export function formatSchoolList(schools: SchoolInfoData[]): FormattedSchoolList
 
   return schools.map((school) => {
     const result: FormattedSchoolList = {
-      schoolName: school.SCHUL_NM,
+      formattedSchool: school.SCHUL_NM,
+      school: school.SCHUL_NM,
       ATPT_OFCDC_SC_CODE: school.ATPT_OFCDC_SC_CODE,
       SD_SCHUL_CODE: school.SD_SCHUL_CODE,
     };
@@ -32,7 +33,7 @@ export function formatSchoolList(schools: SchoolInfoData[]): FormattedSchoolList
       const locationName = addressParts.length > 1 ? addressParts[1] : "";
 
       if (locationName) {
-        result.schoolName = `${school.SCHUL_NM}(${locationName})`;
+        result.formattedSchool = `${school.SCHUL_NM}(${locationName})`;
       }
     }
 

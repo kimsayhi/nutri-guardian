@@ -18,7 +18,7 @@ export async function fetchSchoolInfo(params: SchoolApiParams): Promise<SchoolIn
   try {
     const defaultParams: SchoolApiParams = {
       pIndex: 1,
-      pSize: 5,
+      pSize: 20,
     };
 
     const response = await schoolApiClient.get("", {

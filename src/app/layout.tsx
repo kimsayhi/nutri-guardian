@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import GNB from "@/components/layout/GNB";
 import QueryProvider from "@/providers/QueryProvider";
 
 const pretendard = localFont({
@@ -30,9 +29,7 @@ export default function RootLayout({
     <html lang="ko">
       <body className={`${pretendard.variable} ${aggro.variable} antialiased`}>
         <div id="modal-root" />
-        <QueryProvider>
-          <GNB>{children}</GNB>
-        </QueryProvider>
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );
