@@ -22,7 +22,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 // Zod 스키마 정의
 const profileSchema = z
   .object({
-    studentName: z.string().min(1, "학생 이름은 필수입니다."),
+    name: z.string().min(1, "학생 이름은 필수입니다."),
     schoolName: z.string().min(1, "학교는 필수입니다."),
     ATPT_OFCDC_SC_CODE: z.string(),
     SD_SCHUL_CODE: z.string(),
@@ -53,7 +53,7 @@ export default function AddProfile({ onClose }: AddProfileProps) {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
-      studentName: "",
+      name: "",
       schoolName: "",
       ATPT_OFCDC_SC_CODE: "",
       SD_SCHUL_CODE: "",
@@ -73,7 +73,7 @@ export default function AddProfile({ onClose }: AddProfileProps) {
 
     try {
       const payload = {
-        studentName: data.studentName,
+        name: data.name,
         schoolName: data.schoolName,
         ATPT_OFCDC_SC_CODE: data.ATPT_OFCDC_SC_CODE,
         SD_SCHUL_CODE: data.SD_SCHUL_CODE,
@@ -114,16 +114,16 @@ export default function AddProfile({ onClose }: AddProfileProps) {
         >
           <FormField
             control={form.control}
-            name="studentName"
+            name="name"
             render={({ field }) => (
               <FormItem>
                 <div className="flex justify-between">
-                  <FormLabel htmlFor="studentName">학생 이름</FormLabel>
+                  <FormLabel htmlFor="name">학생 이름</FormLabel>
                   <FormMessage />
                 </div>
                 <FormControl>
                   <Input
-                    id="studentName"
+                    id="name"
                     placeholder="이름을 입력하세요."
                     className="rounded-t-lg border-b border-neutral-400 p-2 font-medium outline-0"
                     {...field}

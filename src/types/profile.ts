@@ -1,7 +1,7 @@
 export interface ProfileData {
   id?: string;
   userId: string;
-  studentName: string;
+  name: string;
   schoolName: string;
   ATPT_OFCDC_SC_CODE: string;
   SD_SCHUL_CODE: string;
@@ -14,7 +14,7 @@ export interface ProfileData {
 }
 
 export interface CreateProfileData {
-  studentName: string;
+  name: string;
   schoolName: string;
   ATPT_OFCDC_SC_CODE: string;
   SD_SCHUL_CODE: string;
@@ -25,7 +25,7 @@ export interface CreateProfileData {
 
 export interface UpdateProfileData {
   id: string;
-  studentName?: string;
+  name?: string;
   schoolName?: string;
   ATPT_OFCDC_SC_CODE?: string;
   SD_SCHUL_CODE?: string;

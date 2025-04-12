@@ -15,7 +15,7 @@ export async function getProfiles(): Promise<ProfileData[]> {
     throw new Error("인증되지 않은 사용자입니다.");
   }
 
-  const { data, error } = await supabase
+  const { data: profiles, error } = await supabase
     .from("profiles")
     .select("*")
     .eq("user_id", user.user.id)
@@ -27,11 +27,10 @@ export async function getProfiles(): Promise<ProfileData[]> {
     throw new Error("프로필을 조회하는 중 오류가 발생했습니다.");
   }
 
-  // 컬럼명을 camelCase로 변환
-  const formattedData = data.map((item) => ({
+  const data: ProfileData[] = profiles.map((item) => ({
     id: item.id,
     userId: item.user_id,
-    studentName: item.name, // name -> studentName으로 매핑
+    name: item.name,
     schoolName: item.school_name,
     ATPT_OFCDC_SC_CODE: item.atpt_ofcdc_sc_code,
     SD_SCHUL_CODE: item.sd_schul_code,
@@ -43,7 +42,7 @@ export async function getProfiles(): Promise<ProfileData[]> {
     isDefault: item.is_default,
   }));
 
-  return formattedData;
+  return data;
 }
 
 /**
@@ -57,7 +56,7 @@ export async function getProfile(profileId: string): Promise<ProfileData | null>
     throw new Error("인증되지 않은 사용자입니다.");
   }
 
-  const { data, error } = await supabase
+  const { data: profile, error } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", profileId)
@@ -74,22 +73,22 @@ export async function getProfile(profileId: string): Promise<ProfileData | null>
   }
 
   // 컬럼명을 camelCase로 변환
-  const formattedData = {
-    id: data.id,
-    userId: data.user_id,
-    studentName: data.name, // name -> studentName으로 매핑
-    schoolName: data.school_name,
-    ATPT_OFCDC_SC_CODE: data.atpt_ofcdc_sc_code,
-    SD_SCHUL_CODE: data.sd_schul_code,
-    weight: data.weight,
-    goal: data.goal,
-    createdAt: data.created_at,
-    updatedAt: data.updated_at,
-    isActive: data.is_active,
-    isDefault: data.is_default,
+  const data: ProfileData = {
+    id: profile.id,
+    userId: profile.user_id,
+    name: profile.name,
+    schoolName: profile.school_name,
+    ATPT_OFCDC_SC_CODE: profile.atpt_ofcdc_sc_code,
+    SD_SCHUL_CODE: profile.sd_schul_code,
+    weight: profile.weight,
+    goal: profile.goal,
+    createdAt: profile.created_at,
+    updatedAt: profile.updated_at,
+    isActive: profile.is_active,
+    isDefault: profile.is_default,
   };
 
-  return formattedData;
+  return data;
 }
 
 export async function createProfile(profileData: CreateProfileData): Promise<ProfileData> {
@@ -125,7 +124,7 @@ export async function createProfile(profileData: CreateProfileData): Promise<Pro
 
   const newProfile = {
     user_id: user.user.id,
-    name: profileData.studentName, // studentName -> name으로 변경
+    name: profileData.name,
     school_name: profileData.schoolName,
     atpt_ofcdc_sc_code: profileData.ATPT_OFCDC_SC_CODE,
     sd_schul_code: profileData.SD_SCHUL_CODE,
@@ -137,7 +136,11 @@ export async function createProfile(profileData: CreateProfileData): Promise<Pro
     updated_at: new Date().toISOString(),
   };
 
-  const { data, error } = await supabase.from("profiles").insert([newProfile]).select().single();
+  const { data: createdProfile, error } = await supabase
+    .from("profiles")
+    .insert([newProfile])
+    .select()
+    .single();
 
   if (error) {
     console.error("프로필 생성 오류:", error);
@@ -145,23 +148,23 @@ export async function createProfile(profileData: CreateProfileData): Promise<Pro
   }
 
   // 컬럼명을 camelCase로 변환
-  const formattedData = {
-    id: data.id,
-    userId: data.user_id,
-    studentName: data.name, // name -> studentName으로 매핑
-    schoolName: data.school_name,
-    ATPT_OFCDC_SC_CODE: data.atpt_ofcdc_sc_code,
-    SD_SCHUL_CODE: data.sd_schul_code,
-    weight: data.weight,
-    goal: data.goal,
-    createdAt: data.created_at,
-    updatedAt: data.updated_at,
-    isActive: data.is_active,
-    isDefault: data.is_default,
+  const data: ProfileData = {
+    id: createdProfile.id,
+    userId: createdProfile.user_id,
+    name: createdProfile.name,
+    schoolName: createdProfile.school_name,
+    ATPT_OFCDC_SC_CODE: createdProfile.atpt_ofcdc_sc_code,
+    SD_SCHUL_CODE: createdProfile.sd_schul_code,
+    weight: createdProfile.weight,
+    goal: createdProfile.goal,
+    createdAt: createdProfile.created_at,
+    updatedAt: createdProfile.updated_at,
+    isActive: createdProfile.is_active,
+    isDefault: createdProfile.is_default,
   };
 
   revalidatePath("/main");
-  return formattedData;
+  return data;
 }
 
 /**
@@ -204,7 +207,7 @@ export async function updateProfile(profileData: UpdateProfileData): Promise<Pro
   // 필드 이름 매핑
   const updatedProfile: Record<string, string | number | boolean | null> = {};
 
-  if (profileData.studentName !== undefined) updatedProfile.name = profileData.studentName;
+  if (profileData.name !== undefined) updatedProfile.name = profileData.name;
   if (profileData.schoolName !== undefined) updatedProfile.school_name = profileData.schoolName;
   if (profileData.ATPT_OFCDC_SC_CODE !== undefined)
     updatedProfile.atpt_ofcdc_sc_code = profileData.ATPT_OFCDC_SC_CODE;
@@ -217,7 +220,7 @@ export async function updateProfile(profileData: UpdateProfileData): Promise<Pro
 
   updatedProfile.updated_at = new Date().toISOString();
 
-  const { data, error } = await supabase
+  const { data: updatedProfileData, error } = await supabase
     .from("profiles")
     .update(updatedProfile)
     .eq("id", profileData.id)
@@ -231,23 +234,23 @@ export async function updateProfile(profileData: UpdateProfileData): Promise<Pro
   }
 
   // 컬럼명을 camelCase로 변환
-  const formattedData = {
-    id: data.id,
-    userId: data.user_id,
-    studentName: data.name, // name -> studentName으로 매핑
-    schoolName: data.school_name,
-    ATPT_OFCDC_SC_CODE: data.atpt_ofcdc_sc_code,
-    SD_SCHUL_CODE: data.sd_schul_code,
-    weight: data.weight,
-    goal: data.goal,
-    createdAt: data.created_at,
-    updatedAt: data.updated_at,
-    isActive: data.is_active,
-    isDefault: data.is_default,
+  const data: ProfileData = {
+    id: updatedProfileData.id,
+    userId: updatedProfileData.user_id,
+    name: updatedProfileData.name,
+    schoolName: updatedProfileData.school_name,
+    ATPT_OFCDC_SC_CODE: updatedProfileData.atpt_ofcdc_sc_code,
+    SD_SCHUL_CODE: updatedProfileData.sd_schul_code,
+    weight: updatedProfileData.weight,
+    goal: updatedProfileData.goal,
+    createdAt: updatedProfileData.created_at,
+    updatedAt: updatedProfileData.updated_at,
+    isActive: updatedProfileData.is_active,
+    isDefault: updatedProfileData.is_default,
   };
 
   revalidatePath("/main");
-  return formattedData;
+  return data;
 }
 
 export async function deleteProfile(profileId: string): Promise<void> {
@@ -281,6 +284,7 @@ export async function deleteProfile(profileId: string): Promise<void> {
     throw new Error("프로필을 삭제하는 중 오류가 발생했습니다.");
   }
 
+  // 대표 프로필이 삭제된 경우 새로운 대표 프로필 설정
   if (profileData.is_default) {
     const { data: activeProfiles, error: listError } = await supabase
       .from("profiles")
@@ -303,4 +307,51 @@ export async function deleteProfile(profileId: string): Promise<void> {
   }
 
   revalidatePath("/main");
+}
+
+/**
+ * 사용자의 대표 프로필을 조회합니다.
+ */
+export async function getDefaultProfile(): Promise<ProfileData | null> {
+  const supabase = await createClient();
+
+  const { data: user } = await supabase.auth.getUser();
+  if (!user.user) {
+    throw new Error("인증되지 않은 사용자입니다.");
+  }
+
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("user_id", user.user.id)
+    .eq("is_active", true)
+    .eq("is_default", true)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") {
+      // 데이터가 없는 경우 (대표 프로필이 설정되지 않은 경우)
+      return null;
+    }
+    console.error("대표 프로필 조회 오류:", error);
+    throw new Error("대표 프로필을 조회하는 중 오류가 발생했습니다.");
+  }
+
+  // 컬럼명을 camelCase로 변환
+  const data: ProfileData = {
+    id: profile.id,
+    userId: profile.user_id,
+    name: profile.name,
+    schoolName: profile.school_name,
+    ATPT_OFCDC_SC_CODE: profile.atpt_ofcdc_sc_code,
+    SD_SCHUL_CODE: profile.sd_schul_code,
+    weight: profile.weight,
+    goal: profile.goal,
+    createdAt: profile.created_at,
+    updatedAt: profile.updated_at,
+    isActive: profile.is_active,
+    isDefault: profile.is_default,
+  };
+
+  return data;
 }
