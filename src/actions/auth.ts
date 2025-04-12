@@ -16,7 +16,7 @@ export async function login(formData: FormData) {
     redirect("/error");
   }
   revalidatePath("/", "layout");
-  redirect("/");
+  redirect("/main");
 }
 export async function signup(formData: FormData) {
   const supabase = await createClient();
@@ -28,8 +28,9 @@ export async function signup(formData: FormData) {
   };
   const { error } = await supabase.auth.signUp(data);
   if (error) {
-    redirect("/error");
+    console.log(error);
+    return;
   }
   revalidatePath("/", "layout");
-  redirect("/");
+  redirect("/main");
 }

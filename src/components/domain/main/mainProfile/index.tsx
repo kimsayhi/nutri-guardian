@@ -1,3 +1,4 @@
+"use client";
 import SettingProfile from "@/components/modal-contents/settingProfile";
 import Modal from "@/components/shared/Modal";
 import useModal from "@/hooks/useModal";

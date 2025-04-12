@@ -15,7 +15,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { SupabaseClient } from "@supabase/supabase-js";
+import { createProfile } from "@/actions/profile";
+import { useRouter } from "next/navigation";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 // Zod 스키마 정의
 const profileSchema = z
@@ -24,6 +26,8 @@ const profileSchema = z
     schoolName: z.string().min(1, "학교는 필수입니다."),
     ATPT_OFCDC_SC_CODE: z.string(),
     SD_SCHUL_CODE: z.string(),
+    weight: z.string().min(1, "체중은 필수입니다."),
+    goal: z.enum(["체중 감량", "균형 식단"]),
   })
   .refine(
     (data) => {
@@ -35,18 +39,26 @@ const profileSchema = z
     }
   );
 
+type ProfileFormValues = z.infer<typeof profileSchema>;
+
 interface AddProfileProps {
   onClose: () => void;
 }
 
 export default function AddProfile({ onClose }: AddProfileProps) {
-  const form = useForm<z.infer<typeof profileSchema>>({
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       studentName: "",
       schoolName: "",
       ATPT_OFCDC_SC_CODE: "",
       SD_SCHUL_CODE: "",
+      weight: "",
+      goal: "균형 식단",
     },
   });
   const schoolSearchValue = form.watch("schoolName");
@@ -55,10 +67,29 @@ export default function AddProfile({ onClose }: AddProfileProps) {
   const formattedSchoolList = formatSchoolList(schoolsData);
 
   // 폼 제출 핸들러
-  const onSubmit = (data: z.infer<typeof profileSchema>) => {
-    console.log("제출된 데이터:", data);
+  const onSubmit = async (data: ProfileFormValues) => {
+    setIsSubmitting(true);
+    setError(null);
 
-    onClose();
+    try {
+      const payload = {
+        studentName: data.studentName,
+        schoolName: data.schoolName,
+        ATPT_OFCDC_SC_CODE: data.ATPT_OFCDC_SC_CODE,
+        SD_SCHUL_CODE: data.SD_SCHUL_CODE,
+        weight: parseFloat(data.weight),
+        goal: data.goal,
+      };
+
+      await createProfile(payload);
+      router.refresh();
+      onClose();
+    } catch (err) {
+      console.error("프로필 생성 중 오류 발생:", err);
+      setError(err instanceof Error ? err.message : "프로필을 생성하는 중 오류가 발생했습니다.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // 학교 선택 핸들러
@@ -75,6 +106,7 @@ export default function AddProfile({ onClose }: AddProfileProps) {
   return (
     <>
       <h2 className="flex flex-col items-center justify-center p-2 font-extrabold">프로필 추가</h2>
+      {error && <div className="mb-4 rounded-md bg-red-50 p-2 text-sm text-red-500">{error}</div>}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -100,6 +132,7 @@ export default function AddProfile({ onClose }: AddProfileProps) {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="schoolName"
@@ -142,9 +175,63 @@ export default function AddProfile({ onClose }: AddProfileProps) {
             )}
           />
 
-          <div className="mt-4 flex justify-center gap-2 pt-50 text-sm">
-            <Button type="submit">확인</Button>
-            <Button type="button" variant={"outline"} onClick={onClose}>
+          <FormField
+            control={form.control}
+            name="weight"
+            render={({ field }) => (
+              <FormItem>
+                <div className="flex justify-between">
+                  <FormLabel htmlFor="weight">체중(kg)</FormLabel>
+                  <FormMessage />
+                </div>
+                <FormControl>
+                  <Input
+                    id="weight"
+                    type="number"
+                    className="w-20 rounded-t-lg border-b border-neutral-400 p-2 font-medium outline-0"
+                    {...field}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="goal"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel>목표</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="flex items-center gap-6"
+                  >
+                    <FormItem className="flex items-center">
+                      <FormControl>
+                        <RadioGroupItem value="균형 식단" />
+                      </FormControl>
+                      <FormLabel className="font-normal">균형 식단</FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center">
+                      <FormControl>
+                        <RadioGroupItem value="체중 감량" />
+                      </FormControl>
+                      <FormLabel className="font-normal">체중 감량</FormLabel>
+                    </FormItem>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="flex justify-center gap-2 text-sm">
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "처리 중..." : "확인"}
+            </Button>
+            <Button type="button" variant={"outline"} onClick={onClose} disabled={isSubmitting}>
               취소
             </Button>
           </div>

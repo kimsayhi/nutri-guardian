@@ -1,6 +1,5 @@
-"use client";
-import MainProfile from "@/components/home/mainProfile";
-import DailyReport from "@/components/home/dailyReport";
+import MainProfile from "@/components/domain/main/mainProfile";
+import DailyReport from "@/components/domain/main/dailyReport";
 import { AiOutlineRight } from "react-icons/ai";
 
 export default function MainPage() {
