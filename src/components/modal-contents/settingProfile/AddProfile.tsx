@@ -18,7 +18,8 @@ import { Button } from "@/components/ui/button";
 import { createProfile } from "@/actions/profile";
 import { useRouter } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { CreateProfileData, Gender, GenderLabels, Goal, GoalLabels } from "@/types/profile";
+import { CreateProfileData, Gender, Goal } from "@/types/profile";
+import { GenderLabels, GoalLabels } from "@/constants/profileLabels";
 
 // Zod 스키마 정의
 const profileSchema = z

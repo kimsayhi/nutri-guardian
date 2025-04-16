@@ -3,7 +3,8 @@
 import SettingProfile from "@/components/modal-contents/settingProfile";
 import Modal from "@/components/shared/Modal";
 import useModal from "@/hooks/useModal";
-import { GenderLabels, GoalLabels, ProfileData } from "@/types/profile";
+import { GenderLabels, GoalLabels } from "@/constants/profileLabels";
+import { ProfileData } from "@/types/profile";
 import { IoSettingsSharp } from "react-icons/io5";
 
 interface ProfileProps {
