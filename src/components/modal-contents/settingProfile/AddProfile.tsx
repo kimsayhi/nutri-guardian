@@ -1,3 +1,5 @@
+"use client";
+
 import useSchoolSearch from "@/hooks/useSchoolSearch";
 import { useState } from "react";
 import { formatSchoolList } from "@/utils/schoolFormat";
@@ -15,11 +17,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { createProfile } from "@/actions/profile";
 import { useRouter } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CreateProfileData, Gender, Goal } from "@/types/profile";
 import { GenderLabels, GoalLabels } from "@/constants/profileLabels";
+import useCreateProfileMutation from "@/hooks/mutation/useCreateProfileMutation";
 
 // Zod 스키마 정의
 const profileSchema = z
@@ -50,8 +52,10 @@ interface AddProfileProps {
 
 export default function AddProfile({ onClose }: AddProfileProps) {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // 프로필 생성 mutation 훅 사용
+  const createProfileMutation = useCreateProfileMutation();
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
@@ -72,29 +76,28 @@ export default function AddProfile({ onClose }: AddProfileProps) {
 
   // 폼 제출 핸들러
   const onSubmit = async (data: ProfileFormValues) => {
-    setIsSubmitting(true);
     setError(null);
 
-    try {
-      const payload: CreateProfileData = {
-        name: data.name,
-        schoolName: data.schoolName,
-        ATPT_OFCDC_SC_CODE: data.ATPT_OFCDC_SC_CODE,
-        SD_SCHUL_CODE: data.SD_SCHUL_CODE,
-        weight: parseFloat(data.weight),
-        goal: data.goal as Goal,
-        gender: data.gender as Gender,
-      };
+    const payload: CreateProfileData = {
+      name: data.name,
+      schoolName: data.schoolName,
+      ATPT_OFCDC_SC_CODE: data.ATPT_OFCDC_SC_CODE,
+      SD_SCHUL_CODE: data.SD_SCHUL_CODE,
+      weight: parseFloat(data.weight),
+      goal: data.goal as Goal,
+      gender: data.gender as Gender,
+    };
 
-      await createProfile(payload);
-      router.refresh();
-      onClose();
-    } catch (err) {
-      console.error("프로필 생성 중 오류 발생:", err);
-      setError(err instanceof Error ? err.message : "프로필을 생성하는 중 오류가 발생했습니다.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    createProfileMutation.mutate(payload, {
+      onSuccess: () => {
+        router.refresh();
+        onClose();
+      },
+      onError: (err) => {
+        console.error("프로필 생성 중 오류 발생:", err);
+        setError(err instanceof Error ? err.message : "프로필을 생성하는 중 오류가 발생했습니다.");
+      },
+    });
   };
 
   // 학교 선택 핸들러
@@ -264,10 +267,15 @@ export default function AddProfile({ onClose }: AddProfileProps) {
           />
 
           <div className="flex justify-center gap-2 text-sm">
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "처리 중..." : "확인"}
+            <Button type="submit" disabled={createProfileMutation.isPending}>
+              {createProfileMutation.isPending ? "처리 중..." : "확인"}
             </Button>
-            <Button type="button" variant={"outline"} onClick={onClose} disabled={isSubmitting}>
+            <Button
+              type="button"
+              variant={"outline"}
+              onClick={onClose}
+              disabled={createProfileMutation.isPending}
+            >
               취소
             </Button>
           </div>

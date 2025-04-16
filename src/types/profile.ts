@@ -9,7 +9,7 @@ export enum Gender {
 }
 
 export interface ProfileData {
-  id?: string;
+  id: string;
   userId: string;
   name: string;
   schoolName: string;
