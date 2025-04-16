@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { createProfile } from "@/actions/profile";
 import { useRouter } from "next/navigation";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { CreateProfileData, Gender, GenderLabels, Goal, GoalLabels } from "@/types/profile";
 
 // Zod 스키마 정의
 const profileSchema = z
@@ -27,7 +28,8 @@ const profileSchema = z
     ATPT_OFCDC_SC_CODE: z.string(),
     SD_SCHUL_CODE: z.string(),
     weight: z.string().min(1, "체중은 필수입니다."),
-    goal: z.enum(["체중 감량", "균형 식단"]),
+    goal: z.enum([Goal.BalancedDiet, Goal.WeightLoss]),
+    gender: z.enum([Gender.Male, Gender.Female]),
   })
   .refine(
     (data) => {
@@ -58,7 +60,8 @@ export default function AddProfile({ onClose }: AddProfileProps) {
       ATPT_OFCDC_SC_CODE: "",
       SD_SCHUL_CODE: "",
       weight: "",
-      goal: "균형 식단",
+      goal: Goal.BalancedDiet,
+      gender: Gender.Male,
     },
   });
   const schoolSearchValue = form.watch("schoolName");
@@ -72,13 +75,14 @@ export default function AddProfile({ onClose }: AddProfileProps) {
     setError(null);
 
     try {
-      const payload = {
+      const payload: CreateProfileData = {
         name: data.name,
         schoolName: data.schoolName,
         ATPT_OFCDC_SC_CODE: data.ATPT_OFCDC_SC_CODE,
         SD_SCHUL_CODE: data.SD_SCHUL_CODE,
         weight: parseFloat(data.weight),
-        goal: data.goal,
+        goal: data.goal as Goal,
+        gender: data.gender as Gender,
       };
 
       await createProfile(payload);
@@ -198,6 +202,37 @@ export default function AddProfile({ onClose }: AddProfileProps) {
 
           <FormField
             control={form.control}
+            name="gender"
+            render={({ field }) => (
+              <FormItem className="space-y-2">
+                <FormLabel>성별</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="flex items-center gap-6"
+                  >
+                    <FormItem className="flex items-center">
+                      <FormControl>
+                        <RadioGroupItem value={Gender.Male} />
+                      </FormControl>
+                      <FormLabel className="font-normal">{GenderLabels[Gender.Male]}</FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center">
+                      <FormControl>
+                        <RadioGroupItem value={Gender.Female} />
+                      </FormControl>
+                      <FormLabel className="font-normal">{GenderLabels[Gender.Female]}</FormLabel>
+                    </FormItem>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="goal"
             render={({ field }) => (
               <FormItem className="space-y-2">
@@ -210,15 +245,15 @@ export default function AddProfile({ onClose }: AddProfileProps) {
                   >
                     <FormItem className="flex items-center">
                       <FormControl>
-                        <RadioGroupItem value="균형 식단" />
+                        <RadioGroupItem value={Goal.BalancedDiet} />
                       </FormControl>
-                      <FormLabel className="font-normal">균형 식단</FormLabel>
+                      <FormLabel className="font-normal">{GoalLabels[Goal.BalancedDiet]}</FormLabel>
                     </FormItem>
                     <FormItem className="flex items-center">
                       <FormControl>
-                        <RadioGroupItem value="체중 감량" />
+                        <RadioGroupItem value={Goal.WeightLoss} />
                       </FormControl>
-                      <FormLabel className="font-normal">체중 감량</FormLabel>
+                      <FormLabel className="font-normal">{GoalLabels[Goal.WeightLoss]}</FormLabel>
                     </FormItem>
                   </RadioGroup>
                 </FormControl>

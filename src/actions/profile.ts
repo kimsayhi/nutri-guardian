@@ -36,6 +36,7 @@ export async function getProfiles(): Promise<ProfileData[]> {
     SD_SCHUL_CODE: item.sd_schul_code,
     weight: item.weight,
     goal: item.goal,
+    gender: item.gender,
     createdAt: item.created_at,
     updatedAt: item.updated_at,
     isActive: item.is_active,
@@ -82,6 +83,7 @@ export async function getProfile(profileId: string): Promise<ProfileData | null>
     SD_SCHUL_CODE: profile.sd_schul_code,
     weight: profile.weight,
     goal: profile.goal,
+    gender: profile.gender,
     createdAt: profile.created_at,
     updatedAt: profile.updated_at,
     isActive: profile.is_active,
@@ -130,6 +132,7 @@ export async function createProfile(profileData: CreateProfileData): Promise<Pro
     sd_schul_code: profileData.SD_SCHUL_CODE,
     weight: profileData.weight,
     goal: profileData.goal,
+    gender: profileData.gender,
     is_active: true,
     is_default: shouldBeDefault,
     created_at: new Date().toISOString(),
@@ -157,6 +160,7 @@ export async function createProfile(profileData: CreateProfileData): Promise<Pro
     SD_SCHUL_CODE: createdProfile.sd_schul_code,
     weight: createdProfile.weight,
     goal: createdProfile.goal,
+    gender: createdProfile.gender,
     createdAt: createdProfile.created_at,
     updatedAt: createdProfile.updated_at,
     isActive: createdProfile.is_active,
@@ -215,6 +219,7 @@ export async function updateProfile(profileData: UpdateProfileData): Promise<Pro
     updatedProfile.sd_schul_code = profileData.SD_SCHUL_CODE;
   if (profileData.weight !== undefined) updatedProfile.weight = profileData.weight;
   if (profileData.goal !== undefined) updatedProfile.goal = profileData.goal;
+  if (profileData.gender !== undefined) updatedProfile.gender = profileData.gender;
   if (profileData.isActive !== undefined) updatedProfile.is_active = profileData.isActive;
   if (profileData.isDefault !== undefined) updatedProfile.is_default = profileData.isDefault;
 
@@ -243,6 +248,7 @@ export async function updateProfile(profileData: UpdateProfileData): Promise<Pro
     SD_SCHUL_CODE: updatedProfileData.sd_schul_code,
     weight: updatedProfileData.weight,
     goal: updatedProfileData.goal,
+    gender: updatedProfileData.gender,
     createdAt: updatedProfileData.created_at,
     updatedAt: updatedProfileData.updated_at,
     isActive: updatedProfileData.is_active,
@@ -347,6 +353,7 @@ export async function getDefaultProfile(): Promise<ProfileData | null> {
     SD_SCHUL_CODE: profile.sd_schul_code,
     weight: profile.weight,
     goal: profile.goal,
+    gender: profile.gender,
     createdAt: profile.created_at,
     updatedAt: profile.updated_at,
     isActive: profile.is_active,
