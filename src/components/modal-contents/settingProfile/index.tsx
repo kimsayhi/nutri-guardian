@@ -17,7 +17,7 @@ interface SettingProfileProps {
 
 export default function SettingProfile({ onClose }: SettingProfileProps) {
   const { isOpen: isOpenAddProfile, open: addProfileOpen, close: addProfileClose } = useModal();
-  const { profiles, isLoading } = useProfilesQuery();
+  const { data: profiles, isLoading } = useProfilesQuery();
   const [error, setError] = useState<string | null>(null);
 
   // updateProfile을 위한 mutation 훅 사용

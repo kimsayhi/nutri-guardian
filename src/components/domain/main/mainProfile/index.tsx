@@ -6,7 +6,7 @@ import Profile from "./Profile";
 import NoProfile from "./NoProfile";
 
 export default function MainProfile() {
-  const { defaultProfile } = useDefaultProfileQuery();
+  const { data: defaultProfile } = useDefaultProfileQuery();
   return (
     <>
       {defaultProfile ? (

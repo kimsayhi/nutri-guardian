@@ -1,4 +1,8 @@
+import useDailyMeal from "@/hooks/query/useDailyMeal";
+
 export default function DailyMenu() {
+  const { data: dailyMeal } = useDailyMeal();
+  console.log(dailyMeal);
   return (
     <div className="flex h-[230px] w-1/2 flex-col rounded-xl bg-white p-3">
       <div className="flex w-full justify-center text-lg font-semibold">

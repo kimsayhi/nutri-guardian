@@ -10,11 +10,11 @@ export default function useUpdateProfileMutation() {
     mutationFn: (profileData: UpdateProfileData) => updateProfile(profileData),
 
     onMutate: async (newProfileData) => {
-      await queryClient.cancelQueries({ queryKey: [QUERY_KEY.PROFILES] });
-      const previousProfiles = queryClient.getQueryData<ProfileData[]>([QUERY_KEY.PROFILES]);
+      await queryClient.cancelQueries({ queryKey: QUERY_KEY.PROFILES });
+      const previousProfiles = queryClient.getQueryData<ProfileData[]>(QUERY_KEY.PROFILES);
 
       if (previousProfiles && newProfileData.isDefault) {
-        queryClient.setQueryData<ProfileData[]>([QUERY_KEY.PROFILES], (old) => {
+        queryClient.setQueryData<ProfileData[]>(QUERY_KEY.PROFILES, (old) => {
           if (!old) return [];
 
           return old.map((profile) => {
@@ -28,7 +28,7 @@ export default function useUpdateProfileMutation() {
         if (newProfileData.id) {
           const updatedProfile = previousProfiles.find((p) => p.id === newProfileData.id);
           if (updatedProfile) {
-            queryClient.setQueryData([QUERY_KEY.DEFAULT_PROFILE], {
+            queryClient.setQueryData(QUERY_KEY.DEFAULT_PROFILE, {
               ...updatedProfile,
               isDefault: true,
             });

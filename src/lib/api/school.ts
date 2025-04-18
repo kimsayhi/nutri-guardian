@@ -1,10 +1,8 @@
 import axios from "axios";
 import type { SchoolApiParams, SchoolInfoData, SchoolApiResponse } from "@/types/api/school";
 
-export const SCHOOL_API_KEY =
-  process.env.NEXT_PUBLIC_SCHOOL_API_KEY || "aa9b88a10fb041db8dc9a80cbc23b77c";
-export const SCHOOL_API_BASE_URL =
-  process.env.NEXT_PUBLIC_SCHOOL_API_BASE_URL || "https://open.neis.go.kr/hub/schoolInfo";
+export const SCHOOL_API_KEY = process.env.NEXT_PUBLIC_SCHOOL_API_KEY;
+export const SCHOOL_API_BASE_URL = process.env.NEXT_PUBLIC_SCHOOL_API_BASE_URL;
 
 const schoolApiClient = axios.create({
   baseURL: SCHOOL_API_BASE_URL,

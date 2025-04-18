@@ -69,7 +69,7 @@ export default function useCreateProfileMutation() {
           updatedAt: new Date().toISOString(),
         };
 
-        queryClient.setQueryData([QUERY_KEY.DEFAULT_PROFILE], newDefaultProfile);
+        queryClient.setQueryData(QUERY_KEY.DEFAULT_PROFILE, newDefaultProfile);
       }
 
       return { previousProfiles };
@@ -77,13 +77,13 @@ export default function useCreateProfileMutation() {
 
     onError: (err, newProfileData, context) => {
       if (context?.previousProfiles) {
-        queryClient.setQueryData([QUERY_KEY.PROFILES], context.previousProfiles);
+        queryClient.setQueryData(QUERY_KEY.PROFILES, context.previousProfiles);
       }
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.PROFILES] });
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.DEFAULT_PROFILE] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY.PROFILES });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY.DEFAULT_PROFILE });
     },
   });
 }
