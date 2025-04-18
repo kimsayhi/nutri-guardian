@@ -10,11 +10,11 @@ export default function useCreateProfileMutation() {
     mutationFn: (profileData: CreateProfileData) => createProfile(profileData),
 
     onMutate: async (newProfileData) => {
-      await queryClient.cancelQueries({ queryKey: [QUERY_KEY.PROFILES] });
+      await queryClient.cancelQueries({ queryKey: QUERY_KEY.PROFILES });
 
-      const previousProfiles = queryClient.getQueryData<ProfileData[]>([QUERY_KEY.PROFILES]);
+      const previousProfiles = queryClient.getQueryData<ProfileData[]>(QUERY_KEY.PROFILES);
 
-      queryClient.setQueryData<ProfileData[]>([QUERY_KEY.PROFILES], (old) => {
+      queryClient.setQueryData<ProfileData[]>(QUERY_KEY.PROFILES, (old) => {
         // 새 프로필용 임시 ID 생성
         const tempId = `temp-${Date.now()}`;
 

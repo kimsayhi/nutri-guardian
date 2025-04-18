@@ -32,6 +32,12 @@ export default function useUpdateProfileMutation() {
               ...updatedProfile,
               isDefault: true,
             });
+
+            // 기존 DAILY_MEAL 쿼리 무효화하여 새 프로필의 급식 정보를 가져올 준비
+            const oldDefaultProfile = previousProfiles.find((p) => p.isDefault);
+            if (oldDefaultProfile?.id) {
+              queryClient.removeQueries({ queryKey: QUERY_KEY.DAILY_MEAL(oldDefaultProfile.id) });
+            }
           }
         }
       }
@@ -40,13 +46,22 @@ export default function useUpdateProfileMutation() {
 
     onError: (err, newProfileData, context) => {
       if (context?.previousProfiles) {
-        queryClient.setQueryData([QUERY_KEY.PROFILES], context.previousProfiles);
+        queryClient.setQueryData(QUERY_KEY.PROFILES, context.previousProfiles);
       }
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.PROFILES] });
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.DEFAULT_PROFILE] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY.PROFILES });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY.DEFAULT_PROFILE });
+
+      // 변경된 프로필의 모든 급식 정보 쿼리 무효화
+      // (특정 ID를 알 수 없어 전체 급식 데이터 관련 쿼리 무효화)
+      const profiles = queryClient.getQueryData<ProfileData[]>(QUERY_KEY.PROFILES);
+      if (profiles) {
+        profiles.forEach((profile) => {
+          queryClient.invalidateQueries({ queryKey: QUERY_KEY.DAILY_MEAL(profile.id) });
+        });
+      }
     },
   });
 }
