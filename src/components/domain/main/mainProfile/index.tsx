@@ -1,7 +1,7 @@
 "use client";
 
 import useDefaultProfileQuery from "@/hooks/query/useDefaultProfileQuery";
-import DailyMenu from "./DailyMenu";
+import DailyMeal from "./DailyMeal";
 import Profile from "./Profile";
 import NoProfile from "./NoProfile";
 
@@ -11,9 +11,8 @@ export default function MainProfile() {
     <>
       {defaultProfile ? (
         <>
-          <div className="h-[310px]"></div>
-          <div className="fixed top-[60px] flex w-full justify-center gap-2 px-4 py-10 shadow-sm md:top-[64px] lg:top-[68px]">
-            <DailyMenu />
+          <div className="sticky top-[60px] flex w-full flex-col gap-2 px-4 py-10 shadow-sm md:top-[64px] md:flex-row lg:top-[68px]">
+            <DailyMeal />
             <Profile defaultProfile={defaultProfile} />
           </div>
         </>
