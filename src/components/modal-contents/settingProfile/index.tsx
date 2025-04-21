@@ -45,7 +45,9 @@ export default function SettingProfile({ onClose }: SettingProfileProps) {
 
   return (
     <div className={clsx(isOpenAddProfile && "hidden")}>
-      <h2 className={"flex flex-col items-center justify-center p-2 font-extrabold"}>
+      <h2
+        className={"text-neutral-1000 flex flex-col items-center justify-center p-2 font-extrabold"}
+      >
         <p>프로필을 선택하거나</p>
         <p>새로운 프로필을 등록하세요</p>
       </h2>
@@ -76,7 +78,7 @@ export default function SettingProfile({ onClose }: SettingProfileProps) {
                       <FaUser />
                     </div>
                     <div className="text-left">
-                      <div className="font-medium">{profile.name}</div>
+                      <div className="text-neutral-1000 font-medium">{profile.name}</div>
                       <div className="text-sm text-gray-500">{profile.schoolName}</div>
                     </div>
                   </div>
@@ -96,7 +98,7 @@ export default function SettingProfile({ onClose }: SettingProfileProps) {
         <Button onClick={addProfileOpen} disabled={updateProfileMutation.isPending}>
           새 프로필 추가
         </Button>
-        <Button variant={"outline"} onClick={onClose} disabled={updateProfileMutation.isPending}>
+        <Button variant="cancel" onClick={onClose} disabled={updateProfileMutation.isPending}>
           취소
         </Button>
       </div>

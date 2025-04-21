@@ -272,7 +272,7 @@ export default function AddProfile({ onClose }: AddProfileProps) {
             </Button>
             <Button
               type="button"
-              variant={"outline"}
+              variant={"cancel"}
               onClick={onClose}
               disabled={createProfileMutation.isPending}
             >

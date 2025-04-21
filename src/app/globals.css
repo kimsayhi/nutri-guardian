@@ -68,7 +68,7 @@
 @layer base {
   body {
     background-color: var(--background);
-    color: var(--color-neutral-1000);
+    color: #ffffff;
     font-family: var(--font-display);
   }
   button {
