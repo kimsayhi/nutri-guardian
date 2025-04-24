@@ -1,8 +1,8 @@
 "use client";
-import { Button } from "../ui/button";
+import { Button } from "../../../ui/button";
 import useModal from "@/hooks/useModal";
-import Modal from "../shared/Modal";
-import SettingProfile from "../modal-contents/settingProfile";
+import Modal from "../../../shared/Modal";
+import SettingProfile from "../../../modal-contents/settingProfile";
 
 export default function EditProfileButton() {
   const { isOpen, open, close } = useModal();

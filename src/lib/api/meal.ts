@@ -38,7 +38,6 @@ export async function fetchMealInfo(params: MealApiParams): Promise<MealInfoData
     });
 
     const data = response.data as MealApiResponse;
-    console.log(data);
     if (!data.mealServiceDietInfo || data.mealServiceDietInfo.length < 2) {
       return [];
     }

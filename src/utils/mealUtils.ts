@@ -3,7 +3,7 @@ import { DailyMealData } from "@/types/meal";
 import dayjs from "dayjs";
 
 /**
- * 영양소 정보 문자열에서 특정 영양소 값 추출
+ * 영양소 정보 문자열에서 특정 영양소 값 추출하고 소수점 첫째 자리까지만 반환
  * @param ntrInfo 영양소 정보 문자열
  * @param key 추출할 영양소 키
  * @returns 추출된 영양소 값
@@ -11,16 +11,20 @@ import dayjs from "dayjs";
 export function extractNutritionValue(ntrInfo: string, key: string): number {
   const regex = new RegExp(`${key}\\s*:\\s*([0-9.]+)`);
   const match = ntrInfo.match(regex);
-  return match ? parseFloat(match[1]) : 0;
+  const value = match ? parseFloat(match[1]) : 0;
+  // 소수점 첫째 자리까지 반올림
+  return Number(value.toFixed(1));
 }
 
 /**
- * 칼로리 문자열에서 숫자만 추출
+ * 칼로리 문자열에서 숫자만 추출하고 소수점 첫째 자리까지만 반환
  * @param calInfo 칼로리 정보 문자열 (예: "1026.9 Kcal")
- * @returns 숫자 값
+ * @returns 숫자 값 (소수점 첫째 자리까지)
  */
 export function extractCalories(calInfo: string): number {
-  return parseFloat(calInfo.replace(/[^0-9.]/g, ""));
+  const value = parseFloat(calInfo.replace(/[^0-9.]/g, ""));
+  // 소수점 첫째 자리까지 반올림
+  return Number(value.toFixed(1));
 }
 
 /**
@@ -85,11 +89,13 @@ export function formatDailyMealData(mealsData: MealInfoData[], dateString: strin
 
   // 중식과 석식 영양소 합산
   const total = {
-    calories: (lunch?.calories || 0) + (dinner?.calories || 0),
+    calories: Number(((lunch?.calories || 0) + (dinner?.calories || 0)).toFixed(1)),
     nutrition: {
-      carbs: (lunch?.nutrition?.carbs || 0) + (dinner?.nutrition?.carbs || 0),
-      protein: (lunch?.nutrition?.protein || 0) + (dinner?.nutrition?.protein || 0),
-      fat: (lunch?.nutrition?.fat || 0) + (dinner?.nutrition?.fat || 0),
+      carbs: Number(((lunch?.nutrition?.carbs || 0) + (dinner?.nutrition?.carbs || 0)).toFixed(1)),
+      protein: Number(
+        ((lunch?.nutrition?.protein || 0) + (dinner?.nutrition?.protein || 0)).toFixed(1)
+      ),
+      fat: Number(((lunch?.nutrition?.fat || 0) + (dinner?.nutrition?.fat || 0)).toFixed(1)),
     },
   };
 
