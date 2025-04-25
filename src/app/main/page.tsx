@@ -28,7 +28,7 @@ export default async function MainPage() {
 
   return (
     <>
-      <main className="relative mx-auto flex min-h-screen w-full max-w-screen-md flex-col gap-6 px-4">
+      <main className="relative mx-auto flex min-h-screen w-full max-w-screen-md flex-col gap-6 px-4 py-4">
         <HydrationBoundary state={dehydrate(queryClient)}>
           <Profile />
           <div className="flex flex-col gap-6 py-4">
