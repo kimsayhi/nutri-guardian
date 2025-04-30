@@ -107,3 +107,99 @@ export function formatDailyMealData(mealsData: MealInfoData[], dateString: strin
     date: dayjs(dateString).format("YYYY-MM-DD"),
   };
 }
+
+// 영양소 상태 계산 함수
+export const calculateNutritionStatus = (
+  currentMeal: {
+    calories: number;
+    nutrition: {
+      carbs: number;
+      protein: number;
+      fat: number;
+    };
+  } | null,
+  recommended = {
+    calories: 2100,
+    carbs: 300,
+    protein: 60,
+    fat: 50,
+  }
+) => {
+  if (!currentMeal) {
+    return {
+      calories: { status: "부족", diff: 0 },
+      carbs: { status: "부족", diff: 0 },
+      protein: { status: "부족", diff: 0 },
+      fat: { status: "부족", diff: 0 },
+    };
+  }
+
+  const calcStatus = (current: number, target: number) => {
+    const diff = current - target;
+    const percentage = Math.abs(Math.round((diff / target) * 100));
+
+    if (diff < 0) {
+      return { status: "부족", diff: percentage };
+    } else if (diff > target * 0.2) {
+      // 20% 이상 초과시 과다
+      return { status: "과다", diff: percentage };
+    } else {
+      return { status: "적정", diff: 0 };
+    }
+  };
+
+  return {
+    calories: calcStatus(currentMeal.calories, recommended.calories),
+    carbs: calcStatus(currentMeal.nutrition.carbs, recommended.carbs),
+    protein: calcStatus(currentMeal.nutrition.protein, recommended.protein),
+    fat: calcStatus(currentMeal.nutrition.fat, recommended.fat),
+  };
+};
+
+// 부족한 영양소 메시지 생성
+export const getLowNutritionMessage = (nutritionStatus: {
+  calories: { status: string; diff: number };
+  carbs: { status: string; diff: number };
+  protein: { status: string; diff: number };
+  fat: { status: string; diff: number };
+}) => {
+  const lowItems = [];
+  if (nutritionStatus.calories.status === "부족") {
+    lowItems.push(`열량(${nutritionStatus.calories.diff}%)`);
+  }
+  if (nutritionStatus.carbs.status === "부족") {
+    lowItems.push(`탄수화물(${nutritionStatus.carbs.diff}%)`);
+  }
+  if (nutritionStatus.protein.status === "부족") {
+    lowItems.push(`단백질(${nutritionStatus.protein.diff}%)`);
+  }
+  if (nutritionStatus.fat.status === "부족") {
+    lowItems.push(`지방(${nutritionStatus.fat.diff}%)`);
+  }
+
+  return lowItems.length > 0 ? `${lowItems.join(", ")}이(가) 부족합니다.` : "";
+};
+
+// 과다한 영양소 메시지 생성
+export const getHighNutritionMessage = (nutritionStatus: {
+  calories: { status: string; diff: number };
+  carbs: { status: string; diff: number };
+  protein: { status: string; diff: number };
+  fat: { status: string; diff: number };
+}) => {
+  const highItems = [];
+  if (nutritionStatus.calories.status === "과다") {
+    highItems.push(`열량(${nutritionStatus.calories.diff}%)`);
+  }
+  if (nutritionStatus.carbs.status === "과다") {
+    highItems.push(`탄수화물(${nutritionStatus.carbs.diff}%)`);
+  }
+  if (nutritionStatus.protein.status === "과다") {
+    highItems.push(`단백질(${nutritionStatus.protein.diff}%)`);
+  }
+  if (nutritionStatus.fat.status === "과다") {
+    highItems.push(`지방(${nutritionStatus.fat.diff}%)`);
+  }
+
+  return highItems.length > 0 ? `${highItems.join(", ")}이(가) 과다합니다.` : "";
+};
