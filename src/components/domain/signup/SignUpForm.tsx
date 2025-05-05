@@ -17,6 +17,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { PropsWithChildren, useState } from "react";
 import { signup } from "@/actions/auth";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const signUpSchema = z
   .object({
@@ -135,9 +136,17 @@ export default function SignUpForm({ children }: PropsWithChildren) {
                 </FormItem>
               )}
             />
-            <Button type="submit" disabled={isLoading || !!success}>
-              가입하기
-            </Button>
+            <div className="flex flex-col gap-2">
+              <Button type="submit" disabled={isLoading || !!success}>
+                가입하기
+              </Button>
+              <div className="text-center text-sm">
+                이미 회원이신가요?
+                <Link href="/login" className="text-blue-500 hover:underline">
+                  로그인
+                </Link>
+              </div>
+            </div>
           </form>
         </Form>
       </CardContent>

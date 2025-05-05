@@ -1,24 +1,100 @@
+"use client";
+import Image from "next/image";
+import { motion } from "motion/react";
+import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+
 export default function LandingPage() {
+  const router = useRouter();
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-4 text-center">
-      <h1 className="mb-8 text-4xl font-bold">영양지킴이에 오신 것을 환영합니다</h1>
-      <p className="mb-8 max-w-lg text-lg text-gray-600">
-        자녀의 급식 식단을 분석하고 부족한 영양소를 챙겨보세요. 건강한 식습관 형성을 도와주는
-        영양지킴이와 함께하세요.
-      </p>
-      <div className="flex gap-4">
-        <a
-          href="/login"
-          className="bg-primary hover:bg-primary/90 rounded-lg px-6 py-3 font-medium text-white transition-colors"
+    <div className="flex flex-col">
+      <div className="relative flex flex-col items-center gap-10 pt-10 xl:flex-row xl:justify-center xl:pt-0">
+        <div className="flex flex-col justify-center text-4xl font-bold xl:items-end">
+          <motion.p
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="pb-3 text-lg"
+          >
+            급식 영양소 분석 서비스
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            우리아이 영양은
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            영양지킴이가
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+          >
+            지켜줄게요
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 1 }}
+            className="py-3"
+          >
+            <Button onClick={() => router.push("/login")} variant={"secondary"} className="w-50">
+              우리 아이 식단 분석하러 가기
+            </Button>
+          </motion.div>
+        </div>
+        <motion.div
+          whileInView={{
+            opacity: 1,
+            x: 0,
+          }}
+          initial={{
+            opacity: 0,
+            x: 100,
+          }}
+          transition={{
+            duration: 1,
+          }}
+          className="relative h-[500px] w-full xl:h-200 xl:w-80"
         >
-          로그인
-        </a>
-        <a
-          href="/signup"
-          className="border-primary text-primary rounded-lg border bg-white px-6 py-3 font-medium transition-colors hover:bg-gray-50"
+          <Image
+            src="/images/landing-menu.png"
+            alt="식단 이미지"
+            className="object-contain"
+            fill
+            sizes="100"
+          />
+        </motion.div>
+        <motion.div
+          whileInView={{
+            opacity: 1,
+            x: 0,
+          }}
+          initial={{
+            opacity: 0,
+            x: 100,
+          }}
+          transition={{
+            duration: 1,
+            delay: 0.5,
+          }}
+          className="relative h-[500px] w-full xl:top-10 xl:-left-30 xl:h-200 xl:w-80"
         >
-          회원가입
-        </a>
+          <Image
+            src="/images/landing-report.png"
+            alt="리포트이미지"
+            className="rounded-lg object-contain"
+            fill
+            sizes="100"
+          />
+        </motion.div>
       </div>
     </div>
   );

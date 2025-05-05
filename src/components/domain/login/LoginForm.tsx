@@ -62,9 +62,22 @@ export default function LoginForm({ children }: PropsWithChildren) {
   };
 
   return (
-    <Card className="w-full md:max-w-md">
+    <Card className="relative w-full md:max-w-md">
       <CardHeader>
         <CardTitle>로그인</CardTitle>
+        <div className="absolute top-1 right-10 flex flex-col">
+          <span>테스트계정</span>
+          <div className="flex gap-3">
+            <div className="flex flex-col">
+              <span>이메일</span>
+              <span>test@test.com</span>
+            </div>
+            <div className="flex flex-col">
+              <span>비밀번호</span>
+              <span>test123!</span>
+            </div>
+          </div>
+        </div>
       </CardHeader>
       <CardContent>
         <Form {...form}>
