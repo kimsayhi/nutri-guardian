@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import Provider from "@/components/provider";
 
 const pretendard = localFont({
   src: "../../public/fonts/PretendardVariable.woff2",
@@ -10,6 +11,7 @@ const pretendard = localFont({
 
 const aggro = localFont({
   src: "../../public/fonts/aggro.woff",
+  variable: "--font-aggro",
   display: "swap",
 });
 
@@ -26,7 +28,8 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={`${pretendard.variable} ${aggro.variable} antialiased`}>
-        <GNB>{children}</GNB>
+        <div id="modal-root" />
+        <Provider>{children}</Provider>
       </body>
     </html>
   );
