@@ -1,7 +1,22 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function updateSession(request: NextRequest) {
+/**
+ * Supabase 세션을 업데이트하고 인증 상태를 확인합니다.
+ * @param request Next.js 요청 객체
+ * @param options 미들웨어 옵션
+ * @returns NextResponse 객체
+ */
+export async function updateSession(
+  request: NextRequest,
+  options: {
+    /**
+     * true인 경우 세션 업데이트만 수행하고 리다이렉트하지 않습니다.
+     * 로그인, 회원가입 페이지에서는 true로 설정하세요.
+     */
+    skipRedirect?: boolean;
+  } = {}
+) {
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -37,12 +52,17 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // skipRedirect 옵션이 true인 경우 리다이렉트하지 않음
+  // 세션 업데이트만 수행하고, 로그인되지 않은 경우 로그인 페이지로 리다이렉트
   if (
+    !options.skipRedirect &&
     !user &&
     !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
+    !request.nextUrl.pathname.startsWith("/auth") &&
+    !request.nextUrl.pathname.startsWith("/signup") &&
+    request.nextUrl.pathname !== "/"
   ) {
-    // no user, potentially respond by redirecting the user to the login page
+    // no user, respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     return NextResponse.redirect(url);

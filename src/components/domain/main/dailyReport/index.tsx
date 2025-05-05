@@ -2,7 +2,7 @@
 import ContentsWrapper from "@/components/shared/ContentsWrapper";
 import ProgressBar from "@/components/shared/progressBar";
 import useDailyNutritionInfo from "@/hooks/useDailyNutritionInfo";
-
+import useDefaultProfileQuery from "@/hooks/query/useDefaultProfileQuery";
 export default function DailyReport() {
   const { nutritionInfo } = useDailyNutritionInfo();
 
@@ -18,9 +18,11 @@ export default function DailyReport() {
       return { text: "부족", color: "text-amber-600", bgColor: "bg-amber-100" };
     }
   };
+  const { data: defaultProfile } = useDefaultProfileQuery();
+  const hasProfile = !!defaultProfile;
 
   return (
-    <ContentsWrapper title="오늘의 영양 리포트">
+    <ContentsWrapper title="오늘의 영양 리포트" isBlur={!hasProfile}>
       <div className="bg-primary-50 flex flex-col gap-2 rounded-xl">
         {nutritionInfo.map((nutrition) => {
           const status = getNutritionStatus(nutrition.dailyNutrition, nutrition.nutritionNeeds);

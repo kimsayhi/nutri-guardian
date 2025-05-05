@@ -1,6 +1,12 @@
-import SignUpForm from "@/components/domain/signup/SignUpForm";
+import { Metadata } from "next";
+import LoginForm from "@/components/domain/login/LoginForm";
 
-export default function SignUp() {
+export const metadata: Metadata = {
+  title: "로그인 - 영양지킴이",
+  description: "영양지킴이 서비스 로그인 페이지",
+};
+
+export default async function Login() {
   return (
     <div className="flex w-full justify-center">
       <div className="flex w-full max-w-md flex-col items-center gap-5 px-4 pt-20 md:max-w-full md:flex-row md:items-start md:justify-center">
@@ -9,7 +15,8 @@ export default function SignUp() {
           <p>영양지킴이에 오신 것을</p>
           <p>환영합니다!</p>
         </div>
-        <SignUpForm>{/* <OAuthButtons /> */}</SignUpForm>
+
+        <LoginForm>{/* <OAuthButtons /> */}</LoginForm>
       </div>
     </div>
   );

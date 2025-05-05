@@ -5,6 +5,7 @@ import { useState } from "react";
 import { cn } from "@/utils/cn";
 import { mockDailyMealData } from "@/lib/mock/mock";
 import ContentsWrapper from "@/components/shared/ContentsWrapper";
+import useDefaultProfileQuery from "@/hooks/query/useDefaultProfileQuery";
 
 type MealType = "lunch" | "dinner";
 
@@ -16,9 +17,11 @@ export default function DailyMeal() {
   const handleTabChange = (meal: MealType) => {
     setSelectedMeal(meal);
   };
+  const { data: defaultProfile } = useDefaultProfileQuery();
+  const hasProfile = !!defaultProfile;
 
   return (
-    <ContentsWrapper title="오늘의 식단">
+    <ContentsWrapper title="오늘의 식단" isBlur={!hasProfile}>
       <div className="flex w-full flex-col rounded-xl bg-white p-4 shadow-md">
         <div className="flex justify-between pb-2">
           <h3 className="flex items-end font-medium text-neutral-700">메뉴</h3>

@@ -11,8 +11,8 @@ import useDefaultProfileQuery from "./useDefaultProfileQuery";
  */
 export default function useDailyMeal() {
   const { data: defaultProfile } = useDefaultProfileQuery();
-  const today = dayjs().format("YYYYMMDD");
-
+  // const today = dayjs().format("YYYYMMDD");
+  const today = dayjs("20250508").format("YYYYMMDD");
   return useQuery({
     queryKey: QUERY_KEY.DAILY_MEAL(defaultProfile?.id ?? ""),
     queryFn: async (): Promise<DailyMealData | null> => {

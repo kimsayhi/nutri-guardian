@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Provider from "@/components/provider";
+import GNB from "@/components/layout/GNB";
+import { ToastContainer } from "@/components/ui/toast";
 
 const pretendard = localFont({
   src: "../../public/fonts/PretendardVariable.woff2",
@@ -29,7 +31,10 @@ export default function RootLayout({
     <html lang="ko">
       <body className={`${pretendard.variable} ${aggro.variable} antialiased`}>
         <div id="modal-root" />
-        <Provider>{children}</Provider>
+        <Provider>
+          <GNB>{children}</GNB>
+          <ToastContainer />
+        </Provider>
       </body>
     </html>
   );
