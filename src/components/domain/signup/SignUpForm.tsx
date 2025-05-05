@@ -14,8 +14,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useState } from "react";
 import { signup } from "@/actions/auth";
+import { useRouter } from "next/navigation";
 
 const signUpSchema = z
   .object({
@@ -35,6 +36,11 @@ const signUpSchema = z
   });
 
 export default function SignUpForm({ children }: PropsWithChildren) {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -44,19 +50,50 @@ export default function SignUpForm({ children }: PropsWithChildren) {
     },
     mode: "onBlur",
   });
+
   const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
-    const formData = new FormData();
-    formData.append("email", data.email);
-    formData.append("password", data.password);
-    await signup(formData);
+    try {
+      setError(null);
+      setSuccess(null);
+      setIsLoading(true);
+
+      const formData = new FormData();
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+
+      const result = await signup(formData);
+
+      if (result && "error" in result) {
+        setError(result.error);
+      } else if (result && "success" in result) {
+        setSuccess(result.success as string);
+        // 회원가입 성공 시 3초 후 로그인 페이지로 이동
+        setTimeout(() => {
+          router.push("/login");
+        }, 3000);
+      }
+    } catch (err) {
+      setError("회원가입 중 오류가 발생했습니다");
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full md:max-w-md">
       <CardHeader>
         <CardTitle>회원 가입</CardTitle>
       </CardHeader>
       <CardContent>
+        {error && <div className="mb-4 rounded bg-red-100 p-3 text-red-600">{error}</div>}
+
+        {success && (
+          <div className="mb-4 rounded bg-green-100 p-3 text-green-600">
+            {success} (3초 후 로그인 페이지로 이동합니다)
+          </div>
+        )}
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-8">
             <FormField
@@ -98,7 +135,9 @@ export default function SignUpForm({ children }: PropsWithChildren) {
                 </FormItem>
               )}
             />
-            <Button type="submit">가입하기</Button>
+            <Button type="submit" disabled={isLoading || !!success}>
+              가입하기
+            </Button>
           </form>
         </Form>
       </CardContent>

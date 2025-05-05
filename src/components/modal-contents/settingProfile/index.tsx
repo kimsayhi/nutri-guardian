@@ -2,14 +2,17 @@
 
 import Modal from "@/components/shared/Modal";
 import AddProfile from "./AddProfile";
+import DeleteConfirm from "./DeleteConfirm";
 import useModal from "@/hooks/useModal";
 import clsx from "clsx";
 import { Button } from "@/components/ui/button";
 import useProfilesQuery from "@/hooks/query/useProfilesQuery";
 import { ProfileData } from "@/types/profile";
 import { useState } from "react";
-import { FaCheck, FaUser } from "react-icons/fa";
+import { FaUser, FaTrash } from "react-icons/fa";
 import useUpdateProfileMutation from "@/hooks/mutation/useUpdateProfileMutation";
+import useDeleteProfileMutation from "@/hooks/mutation/useDeleteProfileMutation";
+import { toast } from "@/utils/toast";
 
 interface SettingProfileProps {
   onClose: () => void;
@@ -17,11 +20,18 @@ interface SettingProfileProps {
 
 export default function SettingProfile({ onClose }: SettingProfileProps) {
   const { isOpen: isOpenAddProfile, open: addProfileOpen, close: addProfileClose } = useModal();
+  const {
+    isOpen: isOpenDeleteConfirm,
+    open: openDeleteConfirm,
+    close: closeDeleteConfirm,
+  } = useModal();
+
   const { data: profiles, isLoading } = useProfilesQuery();
   const [error, setError] = useState<string | null>(null);
+  const [profileToDelete, setProfileToDelete] = useState<ProfileData | null>(null);
 
-  // updateProfile을 위한 mutation 훅 사용
   const updateProfileMutation = useUpdateProfileMutation();
+  const deleteProfileMutation = useDeleteProfileMutation();
 
   const handleSetDefaultProfile = async (profile: ProfileData) => {
     if (profile.isDefault) return;
@@ -43,6 +53,36 @@ export default function SettingProfile({ onClose }: SettingProfileProps) {
     );
   };
 
+  const handleDeleteRequest = (profile: ProfileData) => {
+    if (!profile.id) return;
+
+    // 삭제할 프로필 정보 저장 후 모달 열기
+    setProfileToDelete(profile);
+    openDeleteConfirm();
+  };
+
+  const confirmDelete = () => {
+    if (!profileToDelete?.id) return;
+
+    deleteProfileMutation.mutate(profileToDelete.id, {
+      onSuccess: () => {
+        toast.success("프로필이 삭제되었습니다");
+        closeDeleteConfirm();
+        setProfileToDelete(null);
+      },
+      onError: (err) => {
+        console.error("프로필 삭제 오류:", err);
+        toast.error("프로필 삭제 중 오류가 발생했습니다");
+        closeDeleteConfirm();
+      },
+    });
+  };
+
+  const cancelDelete = () => {
+    closeDeleteConfirm();
+    setProfileToDelete(null);
+  };
+
   return (
     <div className={clsx(isOpenAddProfile && "hidden")}>
       <h2
@@ -62,7 +102,7 @@ export default function SettingProfile({ onClose }: SettingProfileProps) {
         ) : (
           <ul className="flex flex-col gap-2">
             {profiles.map((profile) => (
-              <li key={profile.id}>
+              <li key={profile.id} className="relative">
                 <button
                   onClick={() => handleSetDefaultProfile(profile)}
                   disabled={updateProfileMutation.isPending || profile.isDefault}
@@ -82,11 +122,16 @@ export default function SettingProfile({ onClose }: SettingProfileProps) {
                       <div className="text-sm text-gray-500">{profile.schoolName}</div>
                     </div>
                   </div>
-                  {profile.isDefault && (
-                    <div className="bg-primary rounded-full p-1 text-white">
-                      <FaCheck size={12} />
-                    </div>
-                  )}
+                </button>
+
+                {/* 삭제 버튼 - 모든 프로필에 표시 */}
+                <button
+                  onClick={() => handleDeleteRequest(profile)}
+                  disabled={deleteProfileMutation.isPending}
+                  className="absolute top-2 right-2 rounded-full p-1 text-red-500/50 hover:bg-red-100/50 hover:text-red-700/50"
+                  title="프로필 삭제"
+                >
+                  <FaTrash size={14} />
                 </button>
               </li>
             ))}
@@ -95,13 +140,22 @@ export default function SettingProfile({ onClose }: SettingProfileProps) {
       </div>
 
       <div className="flex justify-center gap-2 text-sm">
-        <Button onClick={addProfileOpen} disabled={updateProfileMutation.isPending}>
+        <Button
+          onClick={addProfileOpen}
+          disabled={updateProfileMutation.isPending || deleteProfileMutation.isPending}
+        >
           새 프로필 추가
         </Button>
-        <Button variant="cancel" onClick={onClose} disabled={updateProfileMutation.isPending}>
+        <Button
+          variant="cancel"
+          onClick={onClose}
+          disabled={updateProfileMutation.isPending || deleteProfileMutation.isPending}
+        >
           취소
         </Button>
       </div>
+
+      {/* 프로필 추가 모달 */}
       <Modal
         isOpen={isOpenAddProfile}
         onClose={addProfileClose}
@@ -110,6 +164,22 @@ export default function SettingProfile({ onClose }: SettingProfileProps) {
         showCloseButton={false}
       >
         <AddProfile onClose={addProfileClose} />
+      </Modal>
+
+      {/* 프로필 삭제 확인 모달 */}
+      <Modal
+        isOpen={isOpenDeleteConfirm}
+        onClose={cancelDelete}
+        darkBackGround={true}
+        closeOnOverlayClick={true}
+        showCloseButton={true}
+      >
+        <DeleteConfirm
+          profile={profileToDelete}
+          isDeleting={deleteProfileMutation.isPending}
+          onConfirm={confirmDelete}
+          onCancel={cancelDelete}
+        />
       </Modal>
     </div>
   );

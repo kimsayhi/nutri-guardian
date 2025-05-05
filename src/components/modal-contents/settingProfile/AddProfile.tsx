@@ -171,7 +171,7 @@ export default function AddProfile({ onClose }: AddProfileProps) {
                         <button
                           type="button"
                           onClick={() => onClickSchoolName(school)}
-                          className="flex w-full rounded-lg px-1 py-0.5 hover:bg-neutral-200"
+                          className="flex w-full rounded-lg px-1 py-0.5 text-neutral-900 hover:bg-neutral-200"
                         >
                           {school.formattedSchool}
                         </button>
@@ -253,12 +253,13 @@ export default function AddProfile({ onClose }: AddProfileProps) {
                       </FormControl>
                       <FormLabel className="font-normal">{GoalLabels[Goal.BalancedDiet]}</FormLabel>
                     </FormItem>
-                    <FormItem className="flex items-center">
+                    {/* 체중 감량에 필요한 공식 추가 필요
+                     <FormItem className="flex items-center">
                       <FormControl>
                         <RadioGroupItem value={Goal.WeightLoss} />
                       </FormControl>
                       <FormLabel className="font-normal">{GoalLabels[Goal.WeightLoss]}</FormLabel>
-                    </FormItem>
+                    </FormItem> */}
                   </RadioGroup>
                 </FormControl>
                 <FormMessage />

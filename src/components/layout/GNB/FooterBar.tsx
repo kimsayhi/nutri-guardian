@@ -1,36 +1,84 @@
-import { PropsWithChildren } from "react";
+"use client";
+import { IoMdHome } from "react-icons/io";
+import { MdOutlineRestaurantMenu } from "react-icons/md";
+import { FaBook, FaPencilAlt } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { useAuthStore } from "@/store/authStore";
+import { usePathname } from "next/navigation";
+// import Link from "next/link";
+import { toast } from "@/utils/toast";
 
-export default function FooterBar({ children }: PropsWithChildren) {
+// 공개 접근 가능한 페이지 경로 목록
+const PUBLIC_PATHS = ["/", "/login", "/signup", "/auth"];
+
+// 푸터바에 표시될 메뉴 항목
+const MENU_ITEMS = [
+  { path: "/main", icon: IoMdHome, label: "메인" },
+  { path: "/record", icon: FaPencilAlt, label: "기록" },
+  { path: "/recipe", icon: FaBook, label: "레시피" },
+  { path: "/menu", icon: MdOutlineRestaurantMenu, label: "급식표" },
+];
+
+export default function FooterBar() {
+  const [mounted, setMounted] = useState(false);
+  const { user, isLoading } = useAuthStore();
+  const pathname = usePathname();
+
+  // 현재 경로가 공개 페이지인지 확인
+  const isPublicPage = PUBLIC_PATHS.some(
+    (path) => pathname === path || pathname.startsWith(path + "/")
+  );
+
+  // 로그인 상태 확인
+  const isLoggedIn = !!user;
+
+  // 컴포넌트 마운트 시 로그인 상태 확인
+  useEffect(() => {
+    // 비공개 페이지인 경우에만 로그인 상태 확인
+    if (!isPublicPage) {
+      useAuthStore.getState().loadUser();
+    }
+    setMounted(true);
+  }, [isPublicPage]);
+
+  // 현재 경로가 활성화된 메뉴인지 확인하는 함수
+  const isActive = (path: string) => pathname === path || pathname.startsWith(path + "/");
+
+  // 마운트되지 않았거나, 공개 페이지인 경우 렌더링하지 않음
+  // 로그인 확인 중이거나 로그인되지 않은 경우에도 렌더링하지 않음
+  if (!mounted || isPublicPage || isLoading || !isLoggedIn) {
+    return null;
+  }
+
   return (
     <>
-      {children}
-      <nav className="fixed right-0 bottom-0 left-0 z-10 flex justify-around border-t bg-white py-2">
-        <button className="text-primary-900 flex flex-col items-center">
-          <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-          </svg>
-          <span className="mt-1 text-xs">메인</span>
-        </button>
-        <button className="flex flex-col items-center text-gray-500">
-          <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z" />
-          </svg>
-          <span className="mt-1 text-xs">기록</span>
-        </button>
-        <button className="flex flex-col items-center text-gray-500">
-          <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z" />
-          </svg>
-          <span className="mt-1 text-xs">레시피</span>
-        </button>
-        <button className="flex flex-col items-center text-gray-500">
-          <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8.1 13.34l2.83-2.83L3.91 3.5c-1.56 1.56-1.56 4.09 0 5.66l4.19 4.18zm6.78-1.81c1.53.71 3.68.21 5.27-1.38 1.91-1.91 2.28-4.65.81-6.12-1.46-1.46-4.2-1.1-6.12.81-1.59 1.59-2.09 3.74-1.38 5.27L3.7 19.87l1.41 1.41L12 14.41l6.88 6.88 1.41-1.41L13.41 13l1.47-1.47z" />
-          </svg>
-          <span className="mt-1 text-xs">급식표</span>
-        </button>
+      <nav className="fixed right-0 bottom-0 left-0 z-10 flex justify-around border-t bg-white py-2 xl:hidden">
+        {MENU_ITEMS.map((item) => (
+          <button
+            key={item.path}
+            onClick={() => {
+              toast.info("구현 중인 기능입니다.");
+            }}
+            className={`flex flex-col items-center ${
+              isActive(item.path) ? "text-neutral-900" : "text-neutral-500"
+            }`}
+          >
+            <item.icon size={24} />
+            <span className="mt-1 text-xs">{item.label}</span>
+          </button>
+          // <Link
+          //   key={item.path}
+          //   href={item.path}
+          //   className={`flex flex-col items-center ${
+          //     isActive(item.path) ? "text-primary-900" : "text-gray-500"
+          //   }`}
+          // >
+          //   <item.icon size={24} />
+          //   <span className="mt-1 text-xs">{item.label}</span>
+          // </Link>
+        ))}
       </nav>
-      <div className="h-[56px]"></div>
+      <div className="h-[56px] xl:hidden"></div>
     </>
   );
 }

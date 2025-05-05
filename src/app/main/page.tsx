@@ -8,6 +8,7 @@ import { getMealsByDate } from "@/lib/api/meal";
 import dayjs from "dayjs";
 import { ProfileData } from "@/types/profile";
 import ReportSummary from "@/components/domain/main/reportSummary";
+
 export default async function MainPage() {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({

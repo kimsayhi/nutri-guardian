@@ -3,25 +3,32 @@ import ContentsWrapper from "@/components/shared/ContentsWrapper";
 import useDailyMeal from "@/hooks/query/useDailyMeal";
 import { Button } from "@/components/ui/button";
 import { mockDailyMealData } from "@/lib/mock/mock";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { FaArrowRight } from "react-icons/fa";
 import {
   calculateNutritionStatus,
   getLowNutritionMessage,
   getHighNutritionMessage,
 } from "@/utils/mealUtils";
-
+import useDefaultProfileQuery from "@/hooks/query/useDefaultProfileQuery";
+import { toast } from "@/utils/toast";
 export default function ReportSummary() {
   const { data: dailyMealData } = useDailyMeal();
   const dailyMeal = dailyMealData || mockDailyMealData;
-  const router = useRouter();
+  // const router = useRouter();
 
   const nutritionStatus = calculateNutritionStatus(dailyMeal.total);
   const lowMessage = getLowNutritionMessage(nutritionStatus);
   const highMessage = getHighNutritionMessage(nutritionStatus);
+  const { data: defaultProfile } = useDefaultProfileQuery();
+  const hasProfile = !!defaultProfile;
 
+  const onClickRecommendRecipe = () => {
+    toast.info("구현 중인 기능입니다.");
+    // router.push("/recipes");
+  };
   return (
-    <ContentsWrapper title="리포트 요약">
+    <ContentsWrapper title="리포트 요약" isBlur={!hasProfile}>
       <div className="flex w-full flex-col rounded-xl bg-white p-4 shadow-md">
         <h3 className="text-primary-600 mb-3 text-lg font-semibold">오늘의 영양 상태</h3>
 
@@ -51,7 +58,7 @@ export default function ReportSummary() {
 
         <div className="mt-4">
           <Button
-            onClick={() => router.push("/recipes")}
+            onClick={onClickRecommendRecipe}
             className="bg-primary-500 hover:bg-primary-600 w-full"
           >
             추천 레시피 보러가기
